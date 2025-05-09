@@ -114,7 +114,7 @@
     <div class="nav-item" onclick="switchTab(1)">📍 坐标转换</div>
     <div class="nav-item" onclick="switchTab(2)">🗺️ 投影转换</div>
     <div class="nav-item" onclick="switchTab(3)">⚙️ 参数调整</div>
-    <div class="nav-item" onclick="switchTab(4)">📜 历史记录</div>
+    <div class="nav-item" onclick="switchTab(4)">📜 批量转换</div>
     
   </div>
   <div class="content-area">
@@ -219,7 +219,7 @@
 
     <!-- 批量转换 -->
     <div class="content">
-      <h2>喵~批量地理坐标转换</h2>
+      <h2>批量地理坐标转换</h2>
       <div class="crs-group">
         <div class="form-group">
           <label>原坐标系</label>
@@ -299,7 +299,7 @@
       source: markerSource,
       style: new ol.style.Style({
         image: new ol.style.Circle({
-          radius: 7, // 圆圈大小 🎯
+          radius: 9, // 圆圈大小 
           fill: new ol.style.Fill({ color: 'red' }), // 填充色
           stroke: new ol.style.Stroke({ color: 'white', width: 2 }) // 边框
         })
@@ -323,7 +323,15 @@
       document.getElementById("lat").value = lat.toFixed(6);
       updateAllCoords();
     });
-
+        // 核心转换函数 
+    function updateAllCoords() {
+      const lon = parseFloat(document.getElementById("lon").value);
+      const lat = parseFloat(document.getElementById("lat").value);
+       // 🐾 原始 WGS84
+      const wgs84 = [lon, lat];
+      const mercator = ol.proj.fromLonLat(wgs84);
+      showPoint(mercator); // 默认地图上展示墨卡托位置
+    }
 
     function convertCoordinates() {
       const sourceCRS = document.getElementById('sourceCRS').value;
@@ -333,7 +341,7 @@
       const resultDiv = document.getElementById('result');
 
       if (isNaN(lon) || isNaN(lat)) {
-        resultDiv.innerHTML = '<span style="color: red;">喵~经纬度输入有误哦！</span>';
+        resultDiv.innerHTML = '<span style="color: red;">经纬度输入有误哦！</span>';
         return;
       }
 
@@ -450,11 +458,7 @@
 
   // 页面加载时初始化
   toggleBandInput();
-    // 核心转换函数 
-    function updateAllCoords() {
-    
-      showPoint(mercator); // 默认地图上展示墨卡托位置
-    }
+
     //导航栏切换
     function switchTab(index) {
       const navItems = document.querySelectorAll('.nav-item');
@@ -546,7 +550,7 @@ originalData.forEach(row => {
     const tbody = document.getElementById('coordsTableBody');
 
     if (sourceCRS === targetCRS) {
-      alert('喵~原坐标系和目标坐标系相同，无需转换！');
+      alert('原坐标系和目标坐标系相同，无需转换！');
       return;
     }
 
