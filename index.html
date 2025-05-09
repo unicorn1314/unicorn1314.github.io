@@ -1,224 +1,596 @@
 <!DOCTYPE html>
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link rel="icon" href=""./favicon.ico" type="images/x-ico" />
-		<title>楠与妍</title>
-	    
-        <link type="text/css" rel="stylesheet" href="./index_files/default.css">
-		<script type="text/javascript" src="./index_files/jquery.min.js"></script>
-		<script type="text/javascript" src="./index_files/jscex.min.js"></script>
-		<script type="text/javascript" src="./index_files/jscex-parser.js"></script>
-		<script type="text/javascript" src="./index_files/jscex-jit.js"></script>
-		<script type="text/javascript" src="./index_files/jscex-builderbase.min.js"></script>
-		<script type="text/javascript" src="./index_files/jscex-async.min.js"></script>
-		<script type="text/javascript" src="./index_files/jscex-async-powerpack.min.js"></script>
-		<script type="text/javascript" src="./index_files/functions.js" charset="utf-8"></script>
-		<script type="text/javascript" src="./index_files/love.js" charset="utf-8"></script>
-	    <style type="text/css">
-<!--
-.STYLE1 {color: #666666}
--->
-        </style>
-</head>
-    <body>
-        <div id="main">
-            <div id="error">本页面采用HTML5编辑，目前您的浏览器无法显示，请换成谷歌(<a href="http://www.google.cn/chrome/intl/zh-CN/landing_chrome.html?hl=zh-CN&brand=CHMI">Chrome</a>)或者火狐(<a href="http://firefox.com.cn/download/">Firefox</a>)浏览器，或者其他游览器的最新版本。</div>
-            <div id="wrap">
-                <div id="text">
-			        <div id="code">
-			        	<span class="say">* 致陈诗妍： *</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">谢谢你陪着稀奇古怪的我</span><br>
-						<span class="say"> </span><br>
-                                        <span class="say">斯人若彩虹，遇上方知有。</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">这一次的喜欢和合适，撞了个满怀</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">你说最好的人会来到身边</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">此刻我也怎么想</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">问问心</span><br>
-						<span class="say"> </span><br>
-			        	<span class="say">它说————情不自禁~</span><br>
-                        <span class="say"> </span><br>
-                        <span class="say">· You are my only girlfriend.</span><br>
-						<span class="say">入目无他人，四下皆是你 </span><br>
-						<span class="say">· I love you,csy!</span><br>
-						<span class="say"> </span><br>
-                        <span class="say"><span class="space"></span>--@author 罗金楠--</span>
-			        </div>
-                </div>
-                <div id="clock-box">
-                    <span class="STYLE1">现在是</span>罗金楠 <span class="STYLE1" style="color: red">❤</span> 陈诗妍<span class="STYLE1" style="color: red">相恋</span>
-                  <div id="clock"></div>
-              </div>
-                <canvas id="canvas" width="1100" height="680"></canvas>
-            </div>
-            
-        </div>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>坐标工具~</title>
+  <link rel="stylesheet" href="./ol/ol.css">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f5f6fa;
+      display: flex;
+      height: 100vh;
+    }
+    #map {
+      width: 100%;
+      height: 400px;
+      border: 2px solid pink;
+      margin-top: 10px;
+      border-radius: 10px;
+    }
+    .sidebar {
+      width: 200px;
+      background-color: #fff;
+      border-right: 1px solid #e8ecef;
+      padding: 20px 0;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    }
+    .nav-item {
+      padding: 15px 20px;
+      color: #606c88;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-item:hover {
+      background-color: #e8ecef;
+      color: #3b5998;
+    }
+    .nav-item.active {
+      background-color: #e3f2fd;
+      color: #3b5998;
+      font-weight: bold;
+    }
+    .content-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .content {
+      display: none;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .content.active {
+      display: block;
+    }
+    h2 {
+      color: #3b5998;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .crs-group {
+      display: flex;
+      gap: 20px; /* 左右间距 */
+    }
+    .crs-group .form-group {
+      flex: 1; /* 左右均分 */
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #606c88;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #e8ecef;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #3b5998;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #4a69bd;
+    }
+    #result{
+     border: 2px solid #3b5998;
+     padding: 10px;
+     border-radius: 10px;
+    }
     
-    <script>
-    </script>
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <div class="nav-item active" onclick="switchTab(0)">🔍 坐标查询</div>
+    <div class="nav-item" onclick="switchTab(1)">📍 坐标转换</div>
+    <div class="nav-item" onclick="switchTab(2)">🗺️ 投影转换</div>
+    <div class="nav-item" onclick="switchTab(3)">⚙️ 参数调整</div>
+    <div class="nav-item" onclick="switchTab(4)">📜 历史记录</div>
+    
+  </div>
+  <div class="content-area">
+   
+    <!-- 坐标查询 -->
+    <div class="content active">
+      <h2>坐标查询</h2>
+      <div>
+        <label>经度：</label><input id="lon" type="number" step="0.000001">
+        <label>纬度：</label><input id="lat" type="number" step="0.000001">
+        <button onclick="Export()">导入选定坐标 🧭</button>
+      </div> 
+      <div id="map"></div>
 
-    <script>
-    (function(){
-        var canvas = $('#canvas');
-		
-        if (!canvas[0].getContext) {
-            $("#error").show();
-            return false;
-        }
 
-        var width = canvas.width();
-        var height = canvas.height();
-        
-        canvas.attr("width", width);
-        canvas.attr("height", height);
+    </div>
+     <!-- 坐标转换 -->
+     <div class="content ">
+      <h2>坐标转换</h2>
+      <div class="crs-group">
+        <div class="form-group">
+          <label>原坐标系</label>
+          <select id="sourceCRS">
+            <option value="EPSG:4326">WGS84 (GPS)</option>
+            <option value="EPSG:4326">CGCS2000</option>
+            <option value="EPSG:4610">西安80</option>
+            <option value="EPSG:4214">北京54</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>目标坐标系</label>
+          <select id="targetCRS">
+            <option value="EPSG:4326">WGS84 (GPS)</option>
+            <option value="EPSG:4326">CGCS2000</option>
+            <option value="EPSG:4610">西安80</option>
+            <option value="EPSG:4214">北京54</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>经度 (°)</label>
+        <input type="text" id="longitude" placeholder="114.000000" value="115.619867">
+      </div>
+      <div class="form-group">
+        <label>纬度 (°)</label>
+        <input type="text" id="latitude" placeholder="34.000000" value="39.633801">
+      </div>
+      <button onclick="convertCoordinates()">转换</button>
+      <div id="result" style="margin-top: 15px; color: #606c88;"></div>
+      
+    </div>
+        <!-- 投影转换 -->
+        <div class="content">
+          <h2>投影坐标转换</h2>
+          <div class="form-group">
+            <label>选择投影类型</label>
+            <select id="projectionType" onchange="toggleBandInput()">
+              <option value="wgs84">WGS84 (经纬度)</option>
+              <option value="webMercator">Web Mercator (EPSG:3857)</option>
+              <option value="gaussKruger">高斯投影 (Gauss-Krüger)</option>
+            </select>
+          </div>
+          <div id="bandInput" class="form-group" style="display: none;">
+            <label>带号 (3°带，如 33-53)</label>
+            <input type="number" id="bandNumber" min="33" max="53" placeholder="输入带号" value="39">
+          </div>
+          <div class="form-group">
+            <label>输入坐标</label>
+            <div style="display: flex; gap: 20px;">
+              <input type="text" id="inputX" placeholder="X 或 经度 (°)" value="115.619867" style="flex: 1;">
+              <input type="text" id="inputY" placeholder="Y 或 纬度 (°)" value="39.633801" style="flex: 1;">
+            </div>
+          </div>
+          <button onclick="toProjection()">转为投影坐标</button>
+          <div id="projResult" style="margin: 15px 0; color: #606c88;"></div>
+          <div class="form-group">
+            <label>输入投影坐标</label>
+            <div style="display: flex; gap: 20px;">
+              <input type="text" id="projX" placeholder="X（米）" style="flex: 1;">
+              <input type="text" id="projY" placeholder="Y（米）" style="flex: 1;">
+            </div>
+          </div>
+          <button onclick="toWgs84()">转为经纬度</button>
+          <div id="wgs84Result" style="margin-top: 15px; color: #606c88;"></div>
+        </div>
+    <!-- 参数调整 -->
+    <div class="content">
+      <h2>参数调整</h2>
+      <div class="form-group">
+        <label>坐标系</label>
+        <select id="revise">
+          <option value="EPSG:4610">西安80</option>
+          <option value="EPSG:4214">北京54</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>towgs84 参数</label>
+        <input id="seven" type="text" placeholder="dx,dy,dz,rx,ry,rz,ds" value="-50,-50,-50,0,0,0,0">
+      </div>
+      <button onclick="setpro()">⚙️ 应用参数</button>
+    </div>
 
-        var opts = {
-            seed: {
-                x: width / 2 - 20,
-                color: "rgb(190, 26, 37)",
-                scale: 2
-            },
-            branch: [
-                [535, 680, 570, 250, 500, 200, 30, 100, [
-                    [540, 500, 455, 417, 340, 400, 13, 100, [
-                        [450, 435, 434, 430, 394, 395, 2, 40]
-                    ]],
-                    [550, 445, 600, 356, 680, 345, 12, 100, [
-                        [578, 400, 648, 409, 661, 426, 3, 80]
-                    ]],
-                    [539, 281, 537, 248, 534, 217, 3, 40],
-                    [546, 397, 413, 247, 328, 244, 9, 80, [
-                        [427, 286, 383, 253, 371, 205, 2, 40],
-                        [498, 345, 435, 315, 395, 330, 4, 60]
-                    ]],
-                    [546, 357, 608, 252, 678, 221, 6, 100, [
-                        [590, 293, 646, 277, 648, 271, 2, 80]
-                    ]]
-                ]] 
-            ],
-            bloom: {
-                num: 700,
-                width: 1080,
-                height: 650,
-            },
-            footer: {
-                width: 1200,
-                height: 5,
-                speed: 10,
+    <!-- 批量转换 -->
+    <div class="content">
+      <h2>喵~批量地理坐标转换</h2>
+      <div class="crs-group">
+        <div class="form-group">
+          <label>原坐标系</label>
+          <select id="sourceCRSS">
+            <option value="EPSG:4326">WGS84 (GPS)</option>
+            <option value="EPSG:4610">西安80</option>
+            <option value="EPSG:4214">北京54</option>
+            <option value="EPSG:4490">CGCS2000</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>目标坐标系</label>
+          <select id="targetCRSS">
+            <option value="EPSG:4326">WGS84 (GPS)</option>
+            <option value="EPSG:4610">西安80</option>
+            <option value="EPSG:4214">北京54</option>
+            <option value="EPSG:4490">CGCS2000</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>上传 CSV 文件（格式：经度,纬度）</label>
+        <input type="file" id="csvInput" accept=".txt">
+      </div>
+      <button onclick="convertBatch()"  id="convertBtn">🐾 批量转换</button>
+      <div id="tableContainer" style="margin: 20px 0; max-height: 300px; overflow-y: auto;">
+        <table id="coordsTable" style="width: 100%; border-collapse: collapse;">
+          <thead>
+            <tr style="background-color: #e3f2fd; color: #3b5998;">
+              <th style="padding: 10px; border: 1px solid #e8ecef;">原始经度 (°)</th>
+              <th style="padding: 10px; border: 1px solid #e8ecef;">原始纬度 (°)</th>
+              <th style="padding: 10px; border: 1px solid #e8ecef;">转换后经度 (°)</th>
+              <th style="padding: 10px; border: 1px solid #e8ecef;">转换后纬度 (°)</th>
+              <th style="padding: 10px; border: 1px solid #e8ecef;">误差 (米)</th>
+            </tr>
+          </thead>
+          <tbody id="coordsTableBody"></tbody>
+        </table>
+      </div>
+      <button onclick="exportCSV()"  id="exportBtn">📤 导出 CSV</button>
+    </div>
+  </div>
+   
+ 
+  <script src="./ol/ol.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+  <script>
+  // 注册 proj4 到 ol.proj
+   ol.proj.proj4.register(proj4);
+
+   // 定义 CGCS2000 坐标系
+   proj4.defs("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs");
+
+    // 添加额外坐标系定义
+    proj4.defs("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs"); // CGCS2000
+
+    // 定义北京54（EPSG:4214）和西安80（EPSG:4610）的投影
+    proj4.defs('EPSG:4214', '+proj=longlat +ellps=krass +towgs84=15.8,-154.4,-82.3,0,0,0,0 +no_defs');
+
+   // 西安80 (EPSG:4610) 到 WGS84 (EPSG:4326) 的北京地区七参数
+    proj4.defs('EPSG:4610', '+proj=longlat +ellps=IAG75 +towgs84=-30, -30, -40, 0, 0, 0, 0 +no_defs');
+
+ // 地图初始化 定位北京
+ const map = new ol.Map({
+      target: 'map',
+      layers: [new ol.layer.Tile({ source: new ol.source.OSM() })],
+      view: new ol.View({
+        center: ol.proj.fromLonLat([116.38, 39.90]),
+        zoom: 18
+      })
+    });
+
+      // 点图层
+        // 创建矢量图层存放标记点
+    const markerSource = new ol.source.Vector();
+        const markerLayer = new ol.layer.Vector({
+      source: markerSource,
+      style: new ol.style.Style({
+        image: new ol.style.Circle({
+          radius: 7, // 圆圈大小 🎯
+          fill: new ol.style.Fill({ color: 'red' }), // 填充色
+          stroke: new ol.style.Stroke({ color: 'white', width: 2 }) // 边框
+        })
+      })
+    });
+    map.addLayer(markerLayer);
+
+    function showPoint(coord3857) {
+  markerLayer.getSource().clear();
+  const point = new ol.geom.Point(coord3857);
+  const feature = new ol.Feature(point);
+  markerLayer.getSource().addFeature(feature);
+  map.getView().animate({ center: coord3857 }); // 🚫 不要 zoom！
+}
+
+    // 监听点击地图，显示坐标
+    map.on('click', function (evt) {
+      const coord3857 = evt.coordinate;
+      const [lon, lat] = ol.proj.toLonLat(coord3857);
+      document.getElementById("lon").value = lon.toFixed(6);
+      document.getElementById("lat").value = lat.toFixed(6);
+      updateAllCoords();
+    });
+
+
+    function convertCoordinates() {
+      const sourceCRS = document.getElementById('sourceCRS').value;
+      const targetCRS = document.getElementById('targetCRS').value;
+      const lon = parseFloat(document.getElementById('longitude').value);
+      const lat = parseFloat(document.getElementById('latitude').value);
+      const resultDiv = document.getElementById('result');
+
+      if (isNaN(lon) || isNaN(lat)) {
+        resultDiv.innerHTML = '<span style="color: red;">喵~经纬度输入有误哦！</span>';
+        return;
+      }
+
+      const coords = [lon, lat];
+      const converted = proj4(sourceCRS, targetCRS, coords);
+      const error = ol.sphere.getDistance(coords, converted);
+      // 计算经纬度差（如果需要显示）
+    const diffLon = Math.abs(coords[0] - converted[0]);
+    const diffLat = Math.abs(coords[1] - converted[1]);
+
+      resultDiv.innerHTML = `
+       <div class="result">
+        <h2>转换结果</h2>
+        <strong>坐标代码:${targetCRS}<br><br>经度:${converted[0].toFixed(6)}°<br><br>纬度:${converted[1].toFixed(6)}°
+        </strong><br>
+        <h2>误差分析</h2>
+        <strong>📏经纬度差异：<br>经度差: ΔLon=${diffLon.toFixed(6)}°<br> 纬度差:ΔLat=${diffLat.toFixed(6)}°<br><br><br></strong>
+        <strong>🎯误差（估算距离）:${error.toFixed(6)}</strong>  米<br>
+      </div>
+      `;
+      
+      Swal.fire(
+  '成功!',
+  '转换已完成。',
+  'success'
+);
+    }
+
+    // 高斯投影定义（动态生成带号）
+  function getGaussKrugerDef(band) {
+    const centralMeridian = (band - 1) * 3 - 180 + 1.5; // 3度带中心经线
+    return `+proj=tmerc +lat_0=0 +lon_0=${centralMeridian} +k=1 +x_0=500000 +y_0=0 +ellps=krass +units=m +no_defs`;
+  }
+
+  function toggleBandInput() {
+    const projectionType = document.getElementById('projectionType').value;
+    const bandInput = document.getElementById('bandInput');
+    bandInput.style.display = projectionType === 'gaussKruger' ? 'block' : 'none';
+  }
+
+  function toProjection() {
+    const projectionType = document.getElementById('projectionType').value;
+    const inputX = parseFloat(document.getElementById('inputX').value);
+    const inputY = parseFloat(document.getElementById('inputY').value);
+    const band = document.getElementById('bandNumber').value;
+    const resultDiv = document.getElementById('projResult');
+
+    if (isNaN(inputX) || isNaN(inputY)) {
+      resultDiv.innerHTML = '<span style="color: red;">输入坐标有误哦！</span>';
+      return;
+    }
+
+    let coords = [inputX, inputY];
+    let targetProj;
+
+    if (projectionType === 'wgs84') {
+      resultDiv.innerHTML = '<span style="color: orange;">已为 WGS84，无需转换！</span>';
+      return;
+    } else if (projectionType === 'webMercator') {
+      targetProj = 'EPSG:3857';
+      coords = ol.proj.fromLonLat(coords); // WGS84 转 Web Mercator
+    } else if (projectionType === 'gaussKruger' && band) {
+      targetProj = getGaussKrugerDef(parseInt(band));
+      coords = proj4('EPSG:4326', targetProj, coords); // WGS84 转高斯
+    } else {
+      resultDiv.innerHTML = '<span style="color: red;">请选择带号！</span>';
+      return;
+    }
+
+    resultDiv.innerHTML = `
+      <strong>投影坐标：</strong><br>
+      X: ${coords[0].toFixed(2)} 米, Y: ${coords[1].toFixed(2)} 米
+    `;
+    document.getElementById('projX').value = coords[0].toFixed(2);
+    document.getElementById('projY').value = coords[1].toFixed(2);
+  }
+
+  function toWgs84() {
+    const projectionType = document.getElementById('projectionType').value;
+    const projX = parseFloat(document.getElementById('projX').value);
+    const projY = parseFloat(document.getElementById('projY').value);
+    const band = document.getElementById('bandNumber').value;
+    const resultDiv = document.getElementById('wgs84Result');
+
+    if (isNaN(projX) || isNaN(projY)) {
+      resultDiv.innerHTML = '<span style="color: red;">投影坐标有误哦！</span>';
+      return;
+    }
+
+    let coords = [projX, projY];
+    let sourceProj;
+
+    if (projectionType === 'wgs84') {
+      resultDiv.innerHTML = '<span style="color: orange;">已为 WGS84，无需转换！</span>';
+      return;
+    } else if (projectionType === 'webMercator') {
+      sourceProj = 'EPSG:3857';
+      coords = ol.proj.toLonLat(coords); // Web Mercator 转 WGS84
+    } else if (projectionType === 'gaussKruger' && band) {
+      sourceProj = getGaussKrugerDef(parseInt(band));
+      coords = proj4(sourceProj, 'EPSG:4326', coords); // 高斯转 WGS84
+    } else {
+      resultDiv.innerHTML = '<span style="color: red;">请选择带号！</span>';
+      return;
+    }
+
+    resultDiv.innerHTML = `
+      <strong>经纬度（WGS84）：</strong><br>
+      经度: ${coords[0].toFixed(6)}°, 纬度: ${coords[1].toFixed(6)}°
+    `;
+    document.getElementById('inputX').value = coords[0].toFixed(6);
+    document.getElementById('inputY').value = coords[1].toFixed(6);
+  }
+
+  // 页面加载时初始化
+  toggleBandInput();
+    // 核心转换函数 
+    function updateAllCoords() {
+    
+      showPoint(mercator); // 默认地图上展示墨卡托位置
+    }
+    //导航栏切换
+    function switchTab(index) {
+      const navItems = document.querySelectorAll('.nav-item');
+      const contents = document.querySelectorAll('.content');
+      navItems.forEach(item => item.classList.remove('active'));
+      contents.forEach(content => content.classList.remove('active'));
+      navItems[index].classList.add('active');
+      contents[index].classList.add('active');
+    }
+ function setpro(){
+  let seven=document.querySelector('#seven').value;
+  let code=document.querySelector('#revise').value;
+   
+  if(code=4214){
+    // 定义北京54（EPSG:4214）和西安80（EPSG:4610）的投影
+    proj4.defs('EPSG:4214', `+proj=longlat +ellps=krass +towgs84=${seven} +no_defs`);
+  }
+  else{
+    // 西安80 (EPSG:4610) 到 WGS84 (EPSG:4326) 的北京地区七参数
+   proj4.defs('EPSG:4610', `+proj=longlat +ellps=IAG75 +towgs84=${seven} +no_defs`);
+  }
+  Swal.fire(
+  '成功!',
+  '设置七参数已完成。',
+  'success'
+);
+ }
+ function Export(){
+  document.getElementById('longitude').value= document.getElementById("lon").value ;
+  document.getElementById('latitude').value= document.getElementById("lat").value ;
+  switchTab(1);
+  Swal.fire(
+  '成功!',
+  '导入坐标成功。',
+  'success'
+);
+ }
+
+ let originalData = [];
+  let convertedData = [];
+  let errors = [];
+
+   // 获取页面上的文件输入元素
+   const fileInput = document.getElementById('csvInput');
+        // 为文件输入元素的 change 事件添加监听器，当用户选择文件时触发
+        fileInput.addEventListener('change', function () {
+            // 获取用户选择的第一个文件（files 是一个类似数组的对象，包含用户选择的所有文件）
+            const file = this.files[0];
+            // 如果用户选择了文件
+            if (file) {
+                // 创建一个 FileReader 实例，用于读取文件
+                const reader = new FileReader();
+                // 为 FileReader 的 load 事件添加监听器，当文件读取完成时触发
+                reader.addEventListener('load', function () {
+                    // 获取读取到的文件内容，以文本形式存储在 result 属性中
+                    const text = reader.result;
+                    // 使用逗号作为分隔符，将文件内容字符串分割成数组
+                    const parts = text.split(',');
+                    // 将分割后的数组打印到控制台
+                    console.log(parts);
+                    originalData = text.split('\n').map(row => row.trim().split(','));
+                    
+
+const tbody = document.getElementById('coordsTableBody');
+originalData = originalData.map(row => row.map(cell => parseFloat(cell)));
+tbody.innerHTML = '';
+originalData.forEach(row => {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="padding: 8px; border: 1px solid #e8ecef;">${ parseFloat(row[0]).toFixed(6)}</td>
+    <td style="padding: 8px; border: 1px solid #e8ecef;">${ parseFloat(row[1]).toFixed(6)}</td>
+    <td style="padding: 8px; border: 1px solid #e8ecef;">-</td>
+    <td style="padding: 8px; border: 1px solid #e8ecef;">-</td>
+    <td style="padding: 8px; border: 1px solid #e8ecef;">-</td>
+  `;
+  tbody.appendChild(tr);
+});    
+                });
+                // 以文本格式读取选择的文件
+                reader.readAsText(file);
             }
-        }
-
-        var tree = new Tree(canvas[0], width, height, opts);
-        var seed = tree.seed;
-        var foot = tree.footer;
-        var hold = 1;
-
-        canvas.click(function(e) {
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            if (seed.hover(x, y)) {
-                hold = 0; 
-                canvas.unbind("click");
-                canvas.unbind("mousemove");
-                canvas.removeClass('hand');
-            }
-        }).mousemove(function(e){
-            var offset = canvas.offset(), x, y;
-            x = e.pageX - offset.left;
-            y = e.pageY - offset.top;
-            canvas.toggleClass('hand', seed.hover(x, y));
         });
 
-        var seedAnimate = eval(Jscex.compile("async", function () {
-            seed.draw();
-            while (hold) {
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canScale()) {
-                seed.scale(0.95);
-                $await(Jscex.Async.sleep(10));
-            }
-            while (seed.canMove()) {
-                seed.move(0, 2);
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-        }));
+  
 
-        var growAnimate = eval(Jscex.compile("async", function () {
-            do {
-    	        tree.grow();
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canGrow());
-        }));
+  function convertBatch() {
+    const sourceCRS = document.getElementById('sourceCRSS').value;
+    const targetCRS = document.getElementById('targetCRSS').value;
+    const tbody = document.getElementById('coordsTableBody');
 
-        var flowAnimate = eval(Jscex.compile("async", function () {
-            do {
-    	        tree.flower(2);
-                $await(Jscex.Async.sleep(10));
-            } while (tree.canFlower());
-        }));
+    if (sourceCRS === targetCRS) {
+      alert('喵~原坐标系和目标坐标系相同，无需转换！');
+      return;
+    }
 
-        var moveAnimate = eval(Jscex.compile("async", function () {
-            tree.snapshot("p1", 240, 0, 610, 680);
-            while (tree.move("p1", 500, 0)) {
-                foot.draw();
-                $await(Jscex.Async.sleep(10));
-            }
-            foot.draw();
-            tree.snapshot("p2", 500, 0, 610, 680);
+    convertedData = [];
+    errors = [];
 
+    originalData.forEach(coords => {
+      const converted = proj4(sourceCRS, targetCRS, coords);
+      convertedData.push(converted);
+      const error = ol.sphere.getDistance(coords, converted);
+      errors.push(error);
+    });
 
-            canvas.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
-            canvas.css("background", "#ffe");
-            $await(Jscex.Async.sleep(300));
-            canvas.css("background", "none");
-        }));
+    tbody.innerHTML = '';
+    originalData.forEach((row, index) => {
+      const converted = convertedData[index];
+      const error = errors[index];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="padding: 8px; border: 1px solid #e8ecef;">${ parseFloat(row[0]).toFixed(6)}</td>
+        <td style="padding: 8px; border: 1px solid #e8ecef;">${ parseFloat(row[0]).toFixed(6)}</td>
+        <td style="padding: 8px; border: 1px solid #e8ecef;">${converted[0].toFixed(6)}</td>
+        <td style="padding: 8px; border: 1px solid #e8ecef;">${converted[1].toFixed(6)}</td>
+        <td style="padding: 8px; border: 1px solid #e8ecef;">${error.toFixed(2)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
 
-        var jumpAnimate = eval(Jscex.compile("async", function () {
-            var ctx = tree.ctx;
-            while (true) {
-                tree.ctx.clearRect(0, 0, width, height);
-                tree.jump();
-                foot.draw();
-                $await(Jscex.Async.sleep(25));
-            }
-        }));
-       //下面修改起始日期
-        var textAnimate = eval(Jscex.compile("async", function () {
-		    var together = new Date();
-		    together.setFullYear(2023, 12, 21); 			//时间年月日 月份0~11
-		    together.setHours(8);						//小时	
-		    together.setMinutes(22);					//分钟
-		    together.setSeconds(2);					//秒前一位
-		    together.setMilliseconds(2);				//秒第二位
+    document.getElementById('exportBtn').disabled = false;
+  }
 
-		    $("#code").show().typewriter();
-            $("#clock-box").fadeIn(500);
-            while (true) {
-                timeElapse(together);
-                $await(Jscex.Async.sleep(1000));
-            }
-        }));
+  function exportCSV() {
+    if (convertedData.length === 0) return;
 
-        var runAsync = eval(Jscex.compile("async", function () {
-            $await(seedAnimate());
-            $await(growAnimate());
-            $await(flowAnimate());
-            $await(moveAnimate());
+    const csvContent = ['原始经度,原始纬度,转换后经度,转换后纬度,误差(米)']
+      .concat(originalData.map((row, index) => `${ parseFloat(row[0])},${ parseFloat(row[0])},${convertedData[index][0]},${convertedData[index][1]},${errors[index]}`))
+      .join('\n');
 
-            textAnimate().start();
-
-            $await(jumpAnimate());
-        }));
-
-        runAsync().start();
-    })();
-    </script>
-    <iframe src = "./我们俩.mp3" allow = "autoplay" hidden /> //自己修改音乐位置
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'converted_geographic_coordinates.csv';
+    link.click();
+  }
+  </script>
 </body>
 </html>
