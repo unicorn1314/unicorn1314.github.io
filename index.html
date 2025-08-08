@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>学习进度跟踪器</title>
+    <title>考研分数占卜</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
     
-    <!-- Tailwind 配置 -->
+    <!-- 配置Tailwind自定义多巴胺风格颜色 -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#FF6B6B',
-                        secondary: '#4ECDC4',
-                        accent: '#FFD166',
-                        dark: '#2A2D34',
-                        light: '#F7FFF7'
+                        primary: '#3B82F6',    // 蓝色
+                        secondary: '#EC4899',  // 粉色
+                        accent: '#8B5CF6',     // 紫色
+                        success: '#10B981',    // 绿色
+                        warning: '#F59E0B',    // 黄色
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -29,442 +29,272 @@
     
     <style type="text/tailwindcss">
         @layer utilities {
-            .content-auto {
-                content-visibility: auto;
+            .card-hover {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
             }
-            .progress-animation {
-                transition: width 1s ease-in-out;
+            .card-hover:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
             }
-            .card-shadow {
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            .gradient-bg {
+                background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 100%);
             }
-            .btn-hover {
-                transform: translateY(-2px);
-                transition: transform 0.2s ease;
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all;
             }
-        }
-        body{
-            background-image: url('https://image.baidu.com/search/down?url=https://tvax4.sinaimg.cn/large/008vpwI7gy1i27ti60u3mj31o01904al.jpg');
-            background-size: cover;
-            background-position: center;
         }
     </style>
-
-    
 </head>
-<body>
-    <div class="container mx-auto px-4 py-8 max-w-5xl">
+<body class="bg-gray-50 min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-8 max-w-2xl">
         <!-- 标题区域 -->
-        <header class="text-center mb-10">
-            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-transparent bg-clip-text bg-gradient-to-r from-dark to-dark mb-2">陈小妍的学习进度</h1>
-            <p class="text-lg text-dark/70 max-w-2xl mx-auto">路漫漫其修远兮，吾将上下而求索</p>
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent mb-2">
+                考研分数占卜
+            </h1>
+            <p class="text-gray-600">输入信息，获取你的考试分数预测</p>
         </header>
         
-        <!-- 添加新项目区域 -->
-        <div class="bg-white rounded-2xl p-6 mb-8 card-shadow transform hover:scale-[1.01] transition-all duration-300">
-            <h2 class="text-xl font-bold mb-4 flex items-center">
-                <i class="fa fa-plus-circle text-primary mr-2"></i>添加新学习项目
-            </h2>
-            <form id="add-form" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label for="new-name" class="block text-sm font-medium text-dark/70 mb-1">学习项目名称</label>
-                        <input type="text" id="new-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="例如：Python编程" required>
-                    </div>
-                    <div>
-                        <label for="new-current" class="block text-sm font-medium text-dark/70 mb-1">当前完成量</label>
-                        <input type="number" id="new-current" min="0" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="0" required>
-                    </div>
-                    <div>
-                        <label for="new-total" class="block text-sm font-medium text-dark/70 mb-1">总学习量</label>
-                        <input type="number" id="new-total" min="1" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="100" required>
-                    </div>
-                    <div>
-                        <label for="new-url" class="block text-sm font-medium text-dark/70 mb-1">学习视频网站</label>
-                        <input type="url" id="new-url" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" placeholder="https://example.com">
-                    </div>
-                </div>
-                <div class="flex justify-end">
-                    <button type="submit" class="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center justify-center">
-                        <i class="fa fa-save mr-2"></i>添加项目
-                    </button>
-                </div>
-            </form>
-        </div>
-        
-        <!-- 统计信息 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-            <div class="bg-white rounded-xl p-4 card-shadow flex items-center transform hover:scale-[1.02] transition-all">
-                <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-4">
-                    <i class="fa fa-book text-primary text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-dark/60 text-sm">总项目数</p>
-                    <p id="total-count" class="text-2xl font-bold">0</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl p-4 card-shadow flex items-center transform hover:scale-[1.02] transition-all">
-                <div class="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center mr-4">
-                    <i class="fa fa-check-circle text-secondary text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-dark/60 text-sm">已完成项目</p>
-                    <p id="completed-count" class="text-2xl font-bold">0</p>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl p-4 card-shadow flex items-center transform hover:scale-[1.02] transition-all">
-                <div class="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mr-4">
-                    <i class="fa fa-tachometer text-accent text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-dark/60 text-sm">平均进度</p>
-                    <p id="average-progress" class="text-2xl font-bold">0%</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- 进度表标题 -->
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold flex items-center">
-                <i class="fa fa-list-alt text-secondary mr-2"></i>学习进度列表
-            </h2>
-            <div class="flex space-x-2">
-                <button id="sort-by-name" class="text-sm px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all flex items-center">
-                    <i class="fa fa-sort-alpha-asc mr-1"></i>按名称排序
-                </button>
-                <button id="sort-by-progress" class="text-sm px-3 py-1 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all flex items-center">
-                    <i class="fa fa-sort-numeric-asc mr-1"></i>按进度排序
-                </button>
-            </div>
-        </div>
-        
-        <!-- 进度表 -->
-        <div id="progress-container" class="space-y-4">
-            <!-- 进度项目将通过JavaScript动态添加 -->
-            <div class="text-center py-12 text-dark/50">
-                <i class="fa fa-bookmark-o text-4xl mb-3"></i>
-                <p>还没有添加任何学习项目</p>
-                <p class="text-sm mt-1">点击上方"添加新学习项目"开始记录你的学习旅程</p>
-            </div>
-        </div>
-        
-        <!-- 修改项目模态框 -->
-        <div id="edit-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-2xl p-6 w-full max-w-md mx-4 card-shadow">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">修改学习项目</h3>
-                    <button id="close-modal" class="text-dark/50 hover:text-dark transition-colors">
-                        <i class="fa fa-times text-xl"></i>
-                    </button>
-                </div>
-                <form id="edit-form" class="space-y-4">
-                    <input type="hidden" id="edit-id">
-                    <div>
-                        <label for="edit-name" class="block text-sm font-medium text-dark/70 mb-1">学习项目名称</label>
-                        <input type="text" id="edit-name" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" required>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
+        <main class="space-y-6">
+            <!-- 输入卡片 -->
+            <div id="inputCard" class="bg-white rounded-xl shadow-sm p-6 card-hover">
+                <form id="fortuneForm" class="space-y-4">
+                    <!-- 基本信息 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="edit-current" class="block text-sm font-medium text-dark/70 mb-1">当前完成量</label>
-                            <input type="number" id="edit-current" min="0" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" required>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">姓名</label>
+                            <input type="text" id="name" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
                         </div>
+                        
                         <div>
-                            <label for="edit-total" class="block text-sm font-medium text-dark/70 mb-1">总学习量</label>
-                            <input type="number" id="edit-total" min="1" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all" required>
+                            <label for="birthday" class="block text-sm font-medium text-gray-700 mb-1">出生日期</label>
+                            <input type="date" id="birthday" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
                         </div>
                     </div>
-                    <div>
-                        <label for="edit-url" class="block text-sm font-medium text-dark/70 mb-1">学习视频网站</label>
-                        <input type="url" id="edit-url" class="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all">
+                    
+                    <!-- 考试信息 -->
+                    <div class="space-y-4">
+                        <div>
+                            <label for="examYear" class="block text-sm font-medium text-gray-700 mb-1">考试年份</label>
+                            <input type="number" id="examYear" min="2000" max="2100" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                        </div>
+                        
+                        <div>
+                            <label for="school" class="block text-sm font-medium text-gray-700 mb-1">目标学校</label>
+                            <input type="text" id="school" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                        </div>
                     </div>
-                    <div class="flex space-x-3">
-                        <button type="button" id="delete-item" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center justify-center">
-                            <i class="fa fa-trash mr-2"></i>删除
-                        </button>
-                        <button type="submit" class="flex-1 bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-all flex items-center justify-center">
-                            <i class="fa fa-check mr-2"></i>保存修改
+                    
+                    <!-- 提交按钮 -->
+                    <div class="pt-2">
+                        <button type="submit" id="predictBtn" 
+                            class="w-full gradient-bg text-white font-medium py-3 px-6 rounded-lg transition-all hover:opacity-90 flex items-center justify-center gap-2">
+                            <i class="fa fa-magic"></i>
+                            <span>开始占卜</span>
                         </button>
                     </div>
                 </form>
             </div>
-        </div>
+            
+            <!-- 结果卡片 (默认隐藏) -->
+            <div id="resultCard" class="hidden bg-white rounded-xl shadow-sm p-6 card-hover">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-1" id="resultTitle"></h2>
+                    <p class="text-sm text-gray-500" id="resultSubtitle"></p>
+                </div>
+                
+                <!-- 分数展示 -->
+                <div class="space-y-4 mb-6">
+                    <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">英语二</span>
+                            <span class="text-primary font-bold text-xl" id="englishScore">0</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">满分 100 分</div>
+                    </div>
+                    
+                    <div class="p-4 bg-purple-50 rounded-lg border border-purple-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">数学二</span>
+                            <span class="text-accent font-bold text-xl" id="mathScore">0</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">满分 150 分</div>
+                    </div>
+                    
+                    <div class="p-4 bg-pink-50 rounded-lg border border-pink-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700">测绘学概论</span>
+                            <span class="text-secondary font-bold text-xl" id="mappingScore">0</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">满分 150 分</div>
+                    </div>
+                    
+                    <div class="p-4 bg-green-50 rounded-lg border border-green-100">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-700 font-medium">总分</span>
+                            <span class="text-success font-bold text-2xl" id="totalScore">0</span>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">满分 400 分</div>
+                    </div>
+                </div>
+                
+                <!-- 运势提示 -->
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h3 class="font-medium text-gray-800 mb-2 flex items-center">
+                        <i class="fa fa-lightbulb-o text-warning mr-2"></i>
+                        运势提示
+                    </h3>
+                    <p class="text-sm text-gray-600" id="fortuneTips"></p>
+                </div>
+                
+                <!-- 重新占卜按钮 -->
+                <button id="resetBtn" 
+                    class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-medium py-2 px-6 rounded-lg transition-all">
+                    重新占卜
+                </button>
+            </div>
+            
+            <!-- 加载状态 (默认隐藏) -->
+            <div id="loadingCard" class="hidden bg-white rounded-xl shadow-sm p-8 text-center">
+                <div class="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full mx-auto animate-spin mb-4"></div>
+                <p class="text-gray-700">正在占卜中...</p>
+            </div>
+        </main>
+        
+        <!-- 页脚 -->
+        <footer class="mt-10 text-center text-gray-500 text-xs">
+            <p>⚠️ 本结果仅供娱乐，考研成功需脚踏实地努力</p>
+        </footer>
     </div>
-    
+
     <script>
-        // 从本地存储加载数据或使用默认数据
-        let learningItems = JSON.parse(localStorage.getItem('learningItems')) || [
-            { id: 1, name: "HTML与CSS基础", current: 51, total: 60, url: "https://www.example.com/html-css" },
-            { id: 2, name: "JavaScript编程", current: 36, total: 60, url: "https://www.example.com/javascript" },
-            { id: 3, name: "React框架学习", current: 18, total: 60, url: "https://www.example.com/react" }
+        // 获取DOM元素
+        const fortuneForm = document.getElementById('fortuneForm');
+        const inputCard = document.getElementById('inputCard');
+        const resultCard = document.getElementById('resultCard');
+        const loadingCard = document.getElementById('loadingCard');
+        const predictBtn = document.getElementById('predictBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        
+        // 结果元素
+        const resultTitle = document.getElementById('resultTitle');
+        const resultSubtitle = document.getElementById('resultSubtitle');
+        const englishScore = document.getElementById('englishScore');
+        const mathScore = document.getElementById('mathScore');
+        const mappingScore = document.getElementById('mappingScore');
+        const totalScore = document.getElementById('totalScore');
+        const fortuneTips = document.getElementById('fortuneTips');
+        
+        // 运势提示语
+        const tips = [
+            "保持良好心态，合理安排复习时间，成功就在前方！",
+            "你的努力终将得到回报，继续加油，未来可期！",
+            "重点攻克薄弱环节，多做真题练习，会有很大提升空间。",
+            "考试时注意时间分配，先易后难，发挥出正常水平就是胜利。",
+            "坚持到最后一刻，不要轻易放弃，奇迹往往发生在坚持中。"
         ];
         
-        // DOM 元素
-        const addForm = document.getElementById('add-form');
-        const progressContainer = document.getElementById('progress-container');
-        const editModal = document.getElementById('edit-modal');
-        const editForm = document.getElementById('edit-form');
-        const closeModal = document.getElementById('close-modal');
-        const deleteItem = document.getElementById('delete-item');
-        const sortByName = document.getElementById('sort-by-name');
-        const sortByProgress = document.getElementById('sort-by-progress');
-        const totalCount = document.getElementById('total-count');
-        const completedCount = document.getElementById('completed-count');
-        const averageProgress = document.getElementById('average-progress');
-        
-        // 初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            renderItems();
-            updateStats();
-        });
-        
-        // 渲染项目列表
-        function renderItems(items = learningItems) {
-            if (items.length === 0) {
-                progressContainer.innerHTML = `
-                    <div class="text-center py-12 text-dark/50">
-                        <i class="fa fa-bookmark-o text-4xl mb-3"></i>
-                        <p>还没有添加任何学习项目</p>
-                        <p class="text-sm mt-1">点击上方"添加新学习项目"开始记录你的学习旅程</p>
-                    </div>
-                `;
-                return;
+        // 生成基于输入信息的随机分数
+        function generateScores(name, birthday, examYear, school) {
+            // 从输入信息生成种子值
+            let seed = 0;
+            
+            // 处理姓名
+            for (let i = 0; i < name.length; i++) {
+                seed += name.charCodeAt(i) * (i + 1);
             }
             
-            progressContainer.innerHTML = '';
+            // 处理生日
+            const [year, month, day] = birthday.split('-').map(Number);
+            seed += year + month * 12 + day * 31;
             
-            items.forEach(item => {
-                const progress = Math.round((item.current / item.total) * 100);
-                const progressColor = getProgressColor(progress);
-                
-                const itemElement = document.createElement('div');
-                itemElement.className = 'bg-white rounded-xl p-5 card-shadow transform hover:scale-[1.01] transition-all duration-300';
-                
-                // 项目名称处理 - 如果有URL则显示为链接，否则为普通文本
-                const nameContent = item.url 
-                    ? `<a href="${item.url}" target="_blank" class="text-lg font-bold text-dark hover:text-primary/80 transition-colors flex items-center">${item.name} <i class="fa fa-external-link ml-1 text-xs"></i></a>`
-                    : `<span class="text-lg font-bold text-dark">${item.name}</span>`;
-                
-                itemElement.innerHTML = `
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div class="flex-1">
-                            ${nameContent}
-                            <div class="flex items-center mt-1">
-                                <span class="text-sm text-dark/60 mr-2">进度:</span>
-                                <span class="text-sm font-medium ${progressColor.class}">${progress}% (${item.current}/${item.total})</span>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-2/3">
-                            <div class="h-4 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="h-full rounded-full progress-animation" style="width: ${progress}%; background: ${progressColor.color}"></div>
-                            </div>
-                        </div>
-                        <div class="flex space-x-2 mt-2 md:mt-0">
-                            <button class="dec-btn p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" data-id="${item.id}">
-                                <i class="fa fa-minus text-dark/70"></i>
-                            </button>
-                            <span class="px-2 py-2 text-sm font-medium flex items-center justify-center">${item.current}</span>
-                            <button class="inc-btn p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" data-id="${item.id}">
-                                <i class="fa fa-plus text-dark/70"></i>
-                            </button>
-                            <button class="edit-btn p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" data-id="${item.id}">
-                                <i class="fa fa-pencil text-dark/70"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                progressContainer.appendChild(itemElement);
-                
-                // 为加减按钮添加事件监听
-                const incBtn = itemElement.querySelector('.inc-btn');
-                const decBtn = itemElement.querySelector('.dec-btn');
-                incBtn.addEventListener('click', () => updateCount(item.id, 1));
-                decBtn.addEventListener('click', () => updateCount(item.id, -1));
-                
-                // 为编辑按钮添加事件监听
-                const editBtn = itemElement.querySelector('.edit-btn');
-                editBtn.addEventListener('click', () => openEditModal(item.id));
-            });
+            // 处理考试年份和学校
+            seed += examYear;
+            for (let i = 0; i < school.length; i++) {
+                seed += school.charCodeAt(i) * (i + 5);
+            }
+            
+            // 简单的伪随机数生成器
+            function random() {
+                seed = Math.sin(seed) * 10000;
+                return seed - Math.floor(seed);
+            }
+            
+            // 生成各科目分数（在合理范围内）
+            const english = Math.floor(random() * 40) + 50; // 50-90
+            const math = Math.floor(random() * 80) + 60;    // 60-140
+            const mapping = Math.floor(random() * 80) + 60; // 60-140
+            
+            return { english, math, mapping };
         }
         
-        // 根据进度获取颜色
-        function getProgressColor(progress) {
-            if (progress >= 80) return { color: '#4ECDC4', class: 'text-secondary' };
-            if (progress >= 50) return { color: '#FFD166', class: 'text-accent' };
-            return { color: '#FF6B6B', class: 'text-primary' };
-        }
-        
-        // 添加新项目
-        addForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const nameInput = document.getElementById('new-name');
-            const currentInput = document.getElementById('new-current');
-            const totalInput = document.getElementById('new-total');
-            const urlInput = document.getElementById('new-url');
-            
-            const newItem = {
-                id: Date.now(), // 使用时间戳作为唯一ID
-                name: nameInput.value,
-                current: parseInt(currentInput.value),
-                total: parseInt(totalInput.value),
-                url: urlInput.value || null
+        // 数字增长动画
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
             };
-            
-            learningItems.push(newItem);
-            saveToLocalStorage();
-            renderItems();
-            updateStats();
-            
-            // 重置表单
-            addForm.reset();
-            
-            // 添加成功动画效果
-            const successToast = document.createElement('div');
-            successToast.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-16 opacity-0 transition-all duration-500 z-50';
-            successToast.innerHTML = '<i class="fa fa-check-circle mr-2"></i>项目添加成功!';
-            document.body.appendChild(successToast);
-            
-            setTimeout(() => {
-                successToast.classList.remove('translate-y-16', 'opacity-0');
-            }, 100);
-            
-            setTimeout(() => {
-                successToast.classList.add('translate-y-16', 'opacity-0');
-                setTimeout(() => successToast.remove(), 500);
-            }, 3000);
-        });
-        
-        // 打开编辑模态框
-        function openEditModal(id) {
-            const item = learningItems.find(item => item.id === id);
-            if (!item) return;
-            
-            document.getElementById('edit-id').value = item.id;
-            document.getElementById('edit-name').value = item.name;
-            document.getElementById('edit-current').value = item.current;
-            document.getElementById('edit-total').value = item.total;
-            document.getElementById('edit-url').value = item.url || '';
-            
-            editModal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // 防止背景滚动
+            window.requestAnimationFrame(step);
         }
         
-        // 关闭编辑模态框
-        closeModal.addEventListener('click', () => {
-            editModal.classList.add('hidden');
-            document.body.style.overflow = '';
-        });
-        
-        // 点击模态框外部关闭
-        editModal.addEventListener('click', (e) => {
-            if (e.target === editModal) {
-                editModal.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // 编辑项目
-        editForm.addEventListener('submit', (e) => {
+        // 表单提交事件
+        fortuneForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const id = parseInt(document.getElementById('edit-id').value);
-            const name = document.getElementById('edit-name').value;
-            const current = parseInt(document.getElementById('edit-current').value);
-            const total = parseInt(document.getElementById('edit-total').value);
-            const url = document.getElementById('edit-url').value || null;
+            // 获取表单数据
+            const name = document.getElementById('name').value.trim();
+            const birthday = document.getElementById('birthday').value;
+            const examYear = document.getElementById('examYear').value;
+            const school = document.getElementById('school').value.trim();
             
-            const index = learningItems.findIndex(item => item.id === id);
-            if (index !== -1) {
-                learningItems[index] = { ...learningItems[index], name, current, total, url };
-                saveToLocalStorage();
-                renderItems();
-                updateStats();
-                editModal.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
-        });
-        
-        // 删除项目
-        deleteItem.addEventListener('click', () => {
-            const id = parseInt(document.getElementById('edit-id').value);
-            const index = learningItems.findIndex(item => item.id === id);
+            // 显示加载状态
+            inputCard.classList.add('hidden');
+            loadingCard.classList.remove('hidden');
             
-            if (index !== -1) {
-                // 删除前确认
-                if (confirm(`确定要删除"${learningItems[index].name}"这个学习项目吗？`)) {
-                    learningItems.splice(index, 1);
-                    saveToLocalStorage();
-                    renderItems();
-                    updateStats();
-                    editModal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }
-            }
-        });
-        
-        // 更新计数
-        function updateCount(id, change) {
-            const index = learningItems.findIndex(item => item.id === id);
-            if (index === -1) return;
-            
-            const item = learningItems[index];
-            const newCurrent = Math.max(0, Math.min(item.current + change, item.total));
-            
-            if (newCurrent !== item.current) {
-                learningItems[index] = { ...item, current: newCurrent };
-                saveToLocalStorage();
-                renderItems();
-                updateStats();
+            // 模拟占卜过程
+            setTimeout(() => {
+                // 生成分数
+                const { english, math, mapping } = generateScores(name, birthday, examYear, school);
+                const total = english + math + mapping;
                 
-                // 添加动画效果
-                const itemElement = progressContainer.children[index];
-                if (itemElement) {
-                    itemElement.classList.add('bg-secondary/10');
-                    setTimeout(() => itemElement.classList.remove('bg-secondary/10'), 300);
-                }
-            }
-        }
-        
-        // 排序功能
-        sortByName.addEventListener('click', () => {
-            const sortedItems = [...learningItems].sort((a, b) => 
-                a.name.localeCompare(b.name, 'zh-CN')
-            );
-            renderItems(sortedItems);
+                // 随机选择一个运势提示
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                
+                // 更新结果信息
+                resultTitle.textContent = `${name}的${examYear}年考研预测`;
+                resultSubtitle.textContent = `目标学校：${school}`;
+                fortuneTips.textContent = randomTip;
+                
+                // 显示结果卡片，隐藏加载卡片
+                loadingCard.classList.add('hidden');
+                resultCard.classList.remove('hidden');
+                
+                // 分数动画
+                animateValue(englishScore, 0, english, 1000);
+                animateValue(mathScore, 0, math, 1000);
+                animateValue(mappingScore, 0, mapping, 1000);
+                animateValue(totalScore, 0, total, 1000);
+                
+            }, 1500);
         });
         
-        sortByProgress.addEventListener('click', () => {
-            const sortedItems = [...learningItems].sort((a, b) => {
-                const progressA = (a.current / a.total) * 100;
-                const progressB = (b.current / b.total) * 100;
-                return progressB - progressA;
-            });
-            renderItems(sortedItems);
+        // 重置按钮事件
+        resetBtn.addEventListener('click', function() {
+            // 重置表单
+            fortuneForm.reset();
+            // 显示输入卡片，隐藏结果卡片
+            resultCard.classList.add('hidden');
+            inputCard.classList.remove('hidden');
         });
-        
-        // 更新统计信息
-        function updateStats() {
-            totalCount.textContent = learningItems.length;
-            
-            const completedItems = learningItems.filter(item => item.current >= item.total);
-            completedCount.textContent = completedItems.length;
-            
-            if (learningItems.length === 0) {
-                averageProgress.textContent = '0%';
-                return;
-            }
-            
-            const totalProgress = learningItems.reduce((sum, item) => sum + (item.current / item.total) * 100, 0);
-            const avgProgress = Math.round(totalProgress / learningItems.length);
-            averageProgress.textContent = `${avgProgress}%`;
-        }
-        
-        // 保存到本地存储
-        function saveToLocalStorage() {
-            localStorage.setItem('learningItems', JSON.stringify(learningItems));
-        }
     </script>
 </body>
 </html>
-    
